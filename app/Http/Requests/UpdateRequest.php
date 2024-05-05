@@ -2,14 +2,13 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class TaskRequest extends FormRequest
+class UpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
     public function authorize(): bool
     {
@@ -19,15 +18,14 @@ class TaskRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
         return [
-            'TaskName' => ['required', 'string', 'max:255'],
-            'TaskDesc' => ['nullable', 'string'],
-            'TaskStatus' => ['required', 'in:Done,Trying,Not Done,Forgotten,No Need,Time Outed'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'status' => ['required', 'in:Done,Trying,Not Done,Forgotten,No Need,Time Outed'],
         ];
     }
-
 }
