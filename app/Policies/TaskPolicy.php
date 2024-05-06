@@ -11,20 +11,21 @@ use Illuminate\Auth\Access\HandlesAuthorization;
 class TaskPolicy
 {
     use HandlesAuthorization;
-    public function create(User $user): bool
+
+    public function store(User $user, Task $task): bool
     {
-//        return $user->id === $task->user_id;
+        return $user->id === $task->user_id;
     }
     public function show(User $user, Task $task): bool
     {
-//        return $user->id === $task->user_id;
+        return $user->id === $task->user_id;
     }
     public function edit(User $user, Task $task): bool
     {
-//        return $user->id === $task->user_id;
+        return $user->id === $task->user_id;
     }
     public function update(User $user, Task $task): bool
     {
-//        return $user->id === $task->user_id;
+        return $user->id === $task->user_id;
     }
 }

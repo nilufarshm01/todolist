@@ -28,4 +28,11 @@ class UpdateRequest extends FormRequest
             'status' => ['required', 'in:Done,Trying,Not Done,Forgotten,No Need,Time Outed'],
         ];
     }
+    public function messages(): array
+    {
+        return [
+            'status.in' => 'The status field must be one of: Done, Trying, Not Done, Forgotten, No Need, Time Outed.',
+        ];
+
+    }
 }

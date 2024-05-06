@@ -10,9 +10,19 @@
 
         @csrf
 
-        <input type="text" name="TaskName" placeholder="Task Title" required> <br><br>
-        <input type="text" name="TaskDesc" placeholder="Task Description"> <br><br>
-        <input type="text" name="TaskStatus" placeholder="Task Status" required> <br><br>
+        <input type="text" name="task_title" placeholder="Title" required> <br><br>
+        <input type="text" name="task_desc" placeholder="Description(Optional)"> <br><br>
+        <input type="text" name="task_stat" placeholder="Status" required> <br><br>
+
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <button type="submit">Submit</button>
 

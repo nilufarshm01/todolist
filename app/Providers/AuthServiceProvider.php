@@ -10,22 +10,18 @@ use App\Policies\TaskPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
-    /**
-     * The policy mappings for the application.
-     *
-     * @var array
-     */
     protected $policies = [
         Task::class => TaskPolicy::class,
     ];
-
-    /**
-     * Register any authentication / authorization services.
-     *
-     * @return void
-     */
     public function boot(): void
     {
         $this->registerPolicies();
+
+        Gate::resource('task', TaskPolicy::class, [
+            'store' => 'store',
+            'view' => 'view',
+            'edit' => 'edit',
+            'update' => 'update',
+        ]);
     }
 }
