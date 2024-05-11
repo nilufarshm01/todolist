@@ -49,16 +49,15 @@
 <form action="{{ route('tasks.index') }}" method="GET">
     <label> Status
         <select name="status">
-            <option>Select</option>
-            <option value="All">All</option>
+            <option>-----</option>
             <option value="Done">Done</option>
-            <option value="not_Done">Not Done</option>
+            <option value="InProgress">InProgress</option>
         </select>
     </label>
 
     <label style="padding-left: 30px; padding-right: 30px">Paginate
         <select name="paginate">
-            <option>Select</option>
+            <option>-----</option>
             <option value="3">3</option>
             <option value="5">5</option>
             <option value="10">10</option>
@@ -80,9 +79,9 @@
     <tbody>
     @foreach($tasks as $task)
         <tr>
-            <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">{{ $task->Title }}</td>
-            <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">{{ $task->Description }}</td>
-            <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">{{ $task->Status }}</td>
+            <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">{{ $task->title }}</td>
+            <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">{{ $task->description }}</td>
+            <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">{{ $task->status }}</td>
             <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">{{ $task->created_at->format('Y/m/d H:i:s') }}</td>
         </tr>
     @endforeach
