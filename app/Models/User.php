@@ -44,4 +44,6 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // todo: define relationship of task and use them where needed.
 }

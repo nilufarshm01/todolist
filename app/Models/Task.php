@@ -13,4 +13,6 @@ class Task extends Model
         'description',
         'status',
     ];
+
+    // todo: define relationship of user
 }
