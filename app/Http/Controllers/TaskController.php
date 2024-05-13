@@ -17,27 +17,23 @@ class TaskController extends Controller
     public function index(IndexTaskRequest $request): View
     {
         $userId = auth()->id();
-        $status = $request->input('status', TaskStatus::incomplete);
+        $status = $request->input('status', TaskStatus::incomplete->value);
         $perPage = $request->input('perPage');
 
         $tasksQuery = Task::where('user_id', $userId)->orderBy('created_at', 'desc');
-
-        if ($status === TaskStatus::complete) {
-            $tasksQuery->completeLastWeek();
-        } elseif ($status === TaskStatus::incomplete) {
-            $tasksQuery->incompleteOrOlderThanWeek();
+        if ($status === TaskStatus::complete->value) {
+            $tasksQuery->complete();
+        } elseif ($status === TaskStatus::incomplete->value) {
+            $tasksQuery->incomplete();
         }
-
         $tasks = $tasksQuery->paginate($perPage);
 
         return view('task.showTask', compact('tasks', 'status', 'perPage'));
     }
-
     public function create(): View
     {
         return view('task.addTask');
     }
-
     public function store(TaskRequest $request): RedirectResponse
     {
         $validatedData = $request->validated();
@@ -53,19 +49,16 @@ class TaskController extends Controller
 
         return redirect()->back();
     }
-
     public function show(Task $task): View
     {
         Gate::authorize('show', $task);
         return view('task.findTask', ['task' => $task]);
     }
-
     public function edit(Task $task): View
     {
         Gate::authorize('show', $task);
         return view('task.updateTask', ['task' => $task]);
     }
-
     public function update(UpdateRequest $request, Task $task): RedirectResponse
     {
         if (Gate::allows('update', $task)) {
