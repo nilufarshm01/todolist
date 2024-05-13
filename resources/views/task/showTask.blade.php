@@ -50,17 +50,17 @@
     <label> Status
         <select name="status">
             <option>-----</option>
-            <option value="Done">Done</option>
-            <option value="InProgress">InProgress</option>
+            <option value="complete">complete</option>
+            <option value="incomplete">incomplete</option>
         </select>
     </label>
 
     <label style="padding-left: 30px; padding-right: 30px">Paginate
-        <select name="paginate">
+        <select name="perPage">
             <option>-----</option>
-            <option value="3">3</option>
-            <option value="5">5</option>
-            <option value="10">10</option>
+            <option value='3'>3</option>
+            <option value='5'>5</option>
+            <option value='10'>10</option>
         </select>
     </label>
 
@@ -82,7 +82,7 @@
             <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">{{ $task->title }}</td>
             <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">{{ $task->description }}</td>
             <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">{{ $task->status }}</td>
-            <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">{{ $task->created_at->format('Y/m/d H:i:s') }}</td>
+            <td style="padding: 8px; text-align: left; border: 1px solid #ddd;">{{ $task->created_at ? $task->created_at->format('Y/m/d H:i:s') : 'N/A' }}</td>
         </tr>
     @endforeach
     </tbody>
@@ -90,7 +90,7 @@
 <br>
 
 @if ($tasks instanceof LengthAwarePaginator)
-    {{ $tasks->appends(['status' => $status, 'paginate' => $paginate])->links() }}
+    {{ $tasks->appends(['status' => $status, 'perPage' => $perPage])->links() }}
 @endif
 
 </body>

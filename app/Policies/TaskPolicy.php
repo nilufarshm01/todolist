@@ -4,8 +4,6 @@ namespace App\Policies;
 
 use App\Models\Task;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
-use App\Http\Controllers\TaskController;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class TaskPolicy

@@ -11,8 +11,8 @@
         @csrf
 
         <input type="text" name="task_title" placeholder="Title" required> <br><br>
-        <input type="text" name="task_desc" placeholder="Description(Optional)"> <br><br>
-        <input type="text" name="task_stat" placeholder="Status" required> <br><br>
+        <input type="text" name="task_description" placeholder="Description(Optional)"> <br><br>
+        <input type="text" name="task_status" placeholder="Status" required> <br><br>
 
         @if ($errors->any())
             <div class="alert alert-danger">
