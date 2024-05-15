@@ -2,38 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IndexTaskRequest;
 use App\Http\Requests\TaskRequest;
 use App\Http\Requests\UpdateRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Http\Request;
-use App\Enums\TaskStatus;
+use App\Enum\TaskStatus;
 use App\Models\Task;
-use App\Models\User;
-use Carbon\Carbon;
 
 class TaskController extends Controller
 {
-    public function index(Request $request): View
+    public function index(IndexTaskRequest $request): View
     {
         $userId = auth()->id();
-        $oneWeekAgo = Carbon::now()->subWeek();
-        $status = $request->input('status', TaskStatus::All);
-        $paginate = $request->input('paginate');
+        $status = $request->input('status', TaskStatus::incomplete->value);
+        $perPage = $request->input('perPage');
 
         $tasksQuery = Task::where('user_id', $userId)->orderBy('created_at', 'desc');
 
-        if ($status === TaskStatus::Done) {
-            $tasksQuery->where('status', TaskStatus::Done)->where('created_at', '>=', $oneWeekAgo);
-        } elseif ($status === TaskStatus::InProgress) {
-            $tasksQuery->where('status', '!=', TaskStatus::Done);
+        if ($status === TaskStatus::complete->value) {
+            $tasksQuery->complete();
+        } elseif ($status === TaskStatus::incomplete->value) {
+            $tasksQuery->incomplete();
+        } else {
+            $tasksQuery->completeWithinLastWeek();
         }
+        $tasks = $tasksQuery->paginate($perPage);
 
-        $tasks = $tasksQuery->paginate($paginate);
-
-        return view('task.showTask', compact('tasks', 'status', 'paginate'));
+        return view('task.showTask', compact('tasks', 'status', 'perPage'));
     }
     public function create(): View
     {
@@ -41,54 +39,40 @@ class TaskController extends Controller
     }
     public function store(TaskRequest $request): RedirectResponse
     {
+        $validatedData = $request->validated();
+
         $task = new Task();
-        $task->user_id = auth()->id();
-        $task->title = $request->input('task_title');
-        $task->description = $request->input('task_desc');
-        $task->status = $request->input('task_stat');
+        $task->user_id = Auth::id();
+        $task->title = $validatedData['task_title'];
+        $task->description = $validatedData['task_description'];
+        $task->status = $validatedData['task_status'];
+        $task->save();
 
-        if (Gate::allows('store', $task)) {
-            $task->save();
-            return redirect()->back();
-        } else {
-            abort(403, 'Unauthorized action.');
-        }
+        Gate::authorize('store', $task);
+
+        return redirect()->back();
     }
-    public function show($title): View
+    public function show(Task $task): View
     {
-        $userId = Auth::id();
-        $task = Task::where('title', $title)->where('user_id', $userId)->firstOrFail();
-
-        if (Gate::allows('show', $task)) {
-            return view('task.findTask', compact('task'));
-        } else {
-            abort(403, 'Unauthorized action.');
-        }
+        Gate::authorize('show', $task);
+        return view('task.findTask', ['task' => $task]);
     }
-    public function edit($title): View
+    public function edit(Task $task): View
     {
-        $userId = Auth::id();
-        $task = Task::where('title', $title)->where('user_id', $userId)->firstOrFail();
-
-        if (Gate::allows('edit', $task)) {
-            return view('task.updateTask', compact('task'));
-        } else {
-            abort(403, 'Unauthorized action.');
-        }
+        Gate::authorize('show', $task);
+        return view('task.updateTask', ['task' => $task]);
     }
-    public function update(UpdateRequest $request, $title): RedirectResponse
+    public function update(UpdateRequest $request, Task $task): RedirectResponse
     {
-        $task = Task::where('title', $title)->firstOrFail();
+        Gate::authorize('update', $task);
 
-        $task->title = $request->input('title');
-        $task->description = $request->input('description');
-        $task->status = $request->input('status');
+        $validatedData = $request->validated();
 
-        if (Gate::allows('update', $task)) {
-            $task->save();
-            return redirect()->route('tasks.edit', ['task' => $task->title])->with('success', 'Task updated successfully.');
-        } else {
-            abort(403, 'Unauthorized action.');
-        }
+        $task->title = $validatedData['title'];
+        $task->description = $validatedData['description'];
+        $task->status = $validatedData['status'];
+        $task->save();
+
+        return redirect()->route('tasks.edit', ['task' => $task])->with('success', __('messages.task_updated_successfully'));
     }
 }

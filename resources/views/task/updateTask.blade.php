@@ -9,7 +9,7 @@
 
 <h1>Update here :</h1>
 
-<form method="POST" action="{{ route('tasks.update', ['task' => $task->title]) }}">
+<form method="POST" action="{{ route('tasks.update', ['task' => $task]) }}">
     @csrf
     @method('PUT')
 
