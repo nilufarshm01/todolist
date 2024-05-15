@@ -21,10 +21,13 @@ class TaskController extends Controller
         $perPage = $request->input('perPage');
 
         $tasksQuery = Task::where('user_id', $userId)->orderBy('created_at', 'desc');
+
         if ($status === TaskStatus::complete->value) {
             $tasksQuery->complete();
         } elseif ($status === TaskStatus::incomplete->value) {
             $tasksQuery->incomplete();
+        } else {
+            $tasksQuery->completeWithinLastWeek();
         }
         $tasks = $tasksQuery->paginate($perPage);
 
@@ -61,14 +64,15 @@ class TaskController extends Controller
     }
     public function update(UpdateRequest $request, Task $task): RedirectResponse
     {
-        if (Gate::allows('update', $task)) {
-            $task->title = $request->input('title');
-            $task->description = $request->input('description');
-            $task->status = $request->input('status');
-            $task->save();
-            return redirect()->route('tasks.edit', ['task' => $task])->with('success', __('messages.task_updated_successfully'));
-        } else {
-            abort(403, 'Unauthorized action.');
-        }
+        Gate::authorize('update', $task);
+
+        $validatedData = $request->validated();
+
+        $task->title = $validatedData['title'];
+        $task->description = $validatedData['description'];
+        $task->status = $validatedData['status'];
+        $task->save();
+
+        return redirect()->route('tasks.edit', ['task' => $task])->with('success', __('messages.task_updated_successfully'));
     }
 }

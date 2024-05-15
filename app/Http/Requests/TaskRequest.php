@@ -17,7 +17,7 @@ class TaskRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'task_status.in' => __('validation.task_status_in'),
+            'task_status.in' => __('validation.task_status.in'),
         ];
     }
 }
